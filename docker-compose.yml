@@ -12,12 +12,24 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
 
+  backend:
+    build: ./backend
+    container_name: backend_e-commerce
+    restart: always
+    depends_on:
+      - postgres
+    ports:
+      - "3002:3000"
+    volumes:
+      - ./backend:/app
+      - /app/node_modules
+
   frontend:
     build: ./frontend
     container_name: frontend_e-commerce
     restart: always
-    #depends_on:
-      #- idp
+    depends_on:
+      - backend
     ports:
       - "8181:80"
     volumes:
