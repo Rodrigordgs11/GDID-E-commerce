@@ -1,0 +1,27 @@
+services:
+  postgres:
+    image: postgres:latest
+    container_name: postgres_e-commerce
+    restart: always
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: admin
+      POSTGRES_DB: idpdb
+    ports:
+      - "54321:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  frontend:
+    build: ./frontend
+    container_name: frontend_e-commerce
+    restart: always
+    #depends_on:
+      #- idp
+    ports:
+      - "8181:80"
+    volumes:
+      - ./frontend/app:/usr/share/nginx/html
+
+volumes:
+  postgres_data:
