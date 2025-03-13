@@ -1,9 +1,12 @@
 const express = require('express');
 const cors = require('cors');
+const bodyParser = require('body-parser');
 const { sequelize } = require('./src/config/database');
+const userRoutes = require('./src/routes/userRoutes');
+const seed = require('./src/seeders/seed');
+require('./src/models/relationships');
 
 const app = express();
-app.use(express.json());
 
 app.use(
     cors({
@@ -14,7 +17,15 @@ app.use(
     })
 );
 
-sequelize.sync();
+app.use(express.json());
+app.use(bodyParser.json());
+app.use(express.urlencoded({ extended: true }));
+
+sequelize.sync({ force: false }).then(() => {
+    seed();
+});
+
+app.use("/", userRoutes);
 
 app.get("/", function(req, res) {
     return res.send("Hello World - E-commerce!!!");
