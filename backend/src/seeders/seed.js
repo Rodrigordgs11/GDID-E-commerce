@@ -7,7 +7,7 @@ const seed = async () => {
     await sequelize.sync({ force: true });
 
     const roles = [
-        { name: "costumer" },
+        { name: "customer" },
         { name: "admin" }
     ];
 
