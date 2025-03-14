@@ -13,7 +13,7 @@ function createProductCard(product) {
     return `
         <div class="col mb-5">
             <div class="card h-100">
-                <img class="card-img-top" src="${product.image}" alt="${product.name}" />
+                <img class="card-img-top" src="${product.image}" alt="${product.name}" style="height: 200px; object-fit: cover;" />
                 <div class="card-body p-4">
                     <div class="text-center">
                         <h5 class="fw-bolder">${product.name}</h5>
