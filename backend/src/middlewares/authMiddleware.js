@@ -4,12 +4,12 @@ const checkRole = (requiredRole) => {
     return async (req, res, next) => {
         try {
 
-            if (!req.username) {
+            if (!req.email) {
                 return res.status(401).json({ message: "User not authenticated" });
             }
 
             const user = await sequelize.models.Users.findOne({
-                where: { username: req.username},
+                where: { email: req.email},
             });
 
             if (!user) {

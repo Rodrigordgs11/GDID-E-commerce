@@ -16,9 +16,9 @@ const seed = async () => {
         const adminRole = roles.find(role => role.name === "admin");
 
         const users = [
-            { username: "user", password: "user", roleId: customerRole.id },
-            { username: "rodrigordgs11", password: "rodrigo", roleId: adminRole.id },
-            { username: "pedroslv05", password: "pedro", roleId: adminRole.id }
+            { email: "user@gmail.com", password: "user", roleId: customerRole.id },
+            { email: "rodrigordgs11@gmail.com", password: "rodrigo", roleId: adminRole.id },
+            { email: "pedroslv05@gmail.com", password: "pedro", roleId: adminRole.id }
         ];
 
         await Users.bulkCreate(users);

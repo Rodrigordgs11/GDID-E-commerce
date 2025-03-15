@@ -28,6 +28,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 if (data.error) {
                     alert("Erro ao realizar login");
                 } else {
+                    console.log("Access token:", data.access_token);
                     localStorage.setItem("access_token", data.access_token);
                     window.location.href = "http://localhost:8181/";
                 }

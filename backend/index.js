@@ -11,7 +11,7 @@ const app = express();
 
 app.use(
     cors({
-        origin: ["http://localhost:8181"],
+        origin: ["http://localhost:8181", "http://localhost:3001"],
         methods: "GET,POST,PUT,DELETE,OPTIONS",
         allowedHeaders: "Content-Type,Authorization",
         credentials: true,
@@ -35,3 +35,4 @@ app.get("/", function(req, res) {
 
 const PORT = process.env.PORT || 3002;
 app.listen(PORT, () => console.log(`Backend E-commerce running on port ${PORT}`));
+

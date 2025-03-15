@@ -24,7 +24,7 @@ services:
       DB_NAME: ${DB_NAME}
       DB_HOST: ${DB_HOST}
       DB_PORT: ${DB_PORT}
-      ACCESS_TOKEN_SECRET: ${ACCESS_TOKEN_SECRET}
+      JWKS_URL: ${JWKS_URL}
     ports:
       - "3002:3002"
     volumes:
