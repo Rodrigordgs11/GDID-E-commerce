@@ -3,10 +3,26 @@ document.addEventListener("DOMContentLoaded", function () {
 });
 
 function fetchProducts() {
-    fetch("http://localhost:3002/products") 
-        .then(response => response.json())
-        .then(data => displayProducts(data.products))
-        .catch(error => console.error("Erro ao buscar produtos:", error));
+    const access_token = localStorage.getItem("access_token");
+    const headers = new Headers();
+    headers.append("Authorization", `Bearer ${access_token}`);
+    
+    fetch("http://localhost:3002/products", {
+        method: "GET",
+        headers: headers,
+    })
+        .then((response) => response.json())
+        .then((data) => {
+            if (data.error) {
+                alert("Erro ao buscar produtos");
+            } else {
+                displayProducts(data.products);
+            }
+        })
+        .catch((error) => {
+            console.error("Erro ao buscar produtos:", error);
+            alert("Erro ao buscar produtos");
+        });
 }
 
 function createProductCard(product) {
