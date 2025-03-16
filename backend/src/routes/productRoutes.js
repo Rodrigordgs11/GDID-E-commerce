@@ -1,10 +1,9 @@
 const express = require("express");
 const { getProducts } = require("../services/productService");
-const checkRole = require("../middlewares/authMiddleware");
-const authenticate = require("../middlewares/autenticate");
+const {authenticate} = require("../middlewares/authenticate");
 
 const router = express.Router();
 
-router.get("/products", authenticate, checkRole("customer"), getProducts);
+router.get("/products", authenticate, getProducts);
 
 module.exports = router;

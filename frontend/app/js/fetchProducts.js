@@ -3,7 +3,7 @@ document.addEventListener("DOMContentLoaded", function () {
 });
 
 function fetchProducts() {
-    const access_token = localStorage.getItem("access_token");
+    const access_token = document.cookie.split(";").find((cookie) => cookie.includes("access_token")).split("=")[1];
     const headers = new Headers();
     headers.append("Authorization", `Bearer ${access_token}`);
     
@@ -14,14 +14,14 @@ function fetchProducts() {
         .then((response) => response.json())
         .then((data) => {
             if (data.error) {
-                alert("Erro ao buscar produtos");
+                alert("Error while fetching products: " + data.error);
             } else {
                 displayProducts(data.products);
             }
         })
         .catch((error) => {
-            console.error("Erro ao buscar produtos:", error);
-            alert("Erro ao buscar produtos");
+            console.error("Error while fetching products: " + error);
+            alert("Error while fetching products: " + error);
         });
 }
 

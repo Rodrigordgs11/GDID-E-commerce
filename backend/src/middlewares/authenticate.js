@@ -8,7 +8,6 @@ let cachedKeys = null;
 const fetchJWKS = async () => {
     try {
         if (!cachedKeys) {
-            console.log(process.env.JWKS_URL);
             const { data } = await axios.get(process.env.JWKS_URL);
             cachedKeys = data.keys;
         }
@@ -43,4 +42,5 @@ const authenticate = async (req, res, next) => {
     }
 };
 
-module.exports = authenticate;
+
+module.exports = { authenticate, getPublicKey };

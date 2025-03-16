@@ -1,5 +1,5 @@
-document.addEventListener("DOMContentLoaded", function () {
-    const baseUrl = window.location.origin + window.location.pathname; 
+document.addEventListener("DOMContentLoaded", async function () {
+    const baseUrl = window.location.origin + window.location.pathname;
     const urlParams = new URLSearchParams(window.location.search);
     const code = urlParams.get("code");
     const state = urlParams.get("state");
@@ -7,35 +7,66 @@ document.addEventListener("DOMContentLoaded", function () {
     const client_secret = urlParams.get("client_secret");
 
     if (code) {
-
         const data = {
             code,
-            // state,
             client_id: client_id,
             client_secret: client_secret,
             redirect_uri: baseUrl,
         };
 
-        fetch("http://localhost:3001/exchange-code-for-token", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify(data),
-        })
-            .then((response) => response.json())
-            .then((data) => {
-                if (data.error) {
-                    alert("Erro ao realizar login");
-                } else {
-                    console.log("Access token:", data.access_token);
-                    localStorage.setItem("access_token", data.access_token);
-                    window.location.href = "http://localhost:8181/";
-                }
-            })
-            .catch((error) => {
-                console.error("Erro ao realizar login:", error);
-                alert("Erro ao realizar login");
+        try {
+            const response = await fetch("http://localhost:3001/exchange-code-for-token", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(data),
             });
+
+            const responseData = await response.json();
+
+            if (responseData.error) {
+                alert("Error while exchanging code for token: " + responseData.error);
+            } else {
+                const userRole = await getUserRole(responseData.access_token);
+
+                document.cookie = `access_token=${responseData.access_token}; path=/; SameSite=None; Secure`;
+                document.cookie = `refresh_token=${responseData.refresh_token}; path=/; SameSite=None; Secure`;
+
+                if (userRole === "admin") {
+                    window.location.href = "http://localhost:8181/admin/index.html";
+                } else if (userRole === "customer") {
+                    window.location.href = "http://localhost:8181/";
+                } else {
+                    window.location.href = "http://localhost:8181/login.html";
+                }
+            }
+        } catch (error) {
+            alert("Error while exchanging code for token: " + error);
+        }
     }
 });
+
+async function getUserRole(access_token) {
+    try {
+        const headers = new Headers();
+        headers.append("Authorization", `Bearer ${access_token}`);
+
+        const response = await fetch("http://localhost:3002/user-role", {
+            method: "GET",
+            headers: headers,
+        });
+
+        const data = await response.json();
+
+        if (data.error) {
+            alert("Error while fetching user role: " + data.error);
+            return null; 
+        } else {
+            return data.role; 
+        }
+    } catch (error) {
+        alert("Error while fetching user role: " + error);
+        return null;
+    }
+}
