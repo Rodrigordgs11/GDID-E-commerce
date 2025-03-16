@@ -62,7 +62,7 @@ async function token_refresh(refresh_token) {
 setInterval(async function () {
     const refresh_token = document.cookie.split(";").find((cookie) => cookie.includes("refresh_token")).split("=")[1];
     await token_refresh(refresh_token);
-}, 300000);
+}, 299999);
 
 function logout() {
     const accessTokenCookie = document.cookie.split("; ").find(row => row.startsWith("access_token="));
