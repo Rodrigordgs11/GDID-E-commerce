@@ -28,16 +28,23 @@ document.addEventListener("DOMContentLoaded", async function () {
             if (responseData.error) {
                 alert("Error while exchanging code for token: " + responseData.error);
             } else {
-                const userRole = await getUserRole(responseData.access_token);
+                alert(responseData.id_token);
+
+                const userRole = await getUserRole(responseData.id_token);
+
+                alert("User role: " + userRole);
 
                 document.cookie = `access_token=${responseData.access_token}; path=/; SameSite=None; Secure`;
                 document.cookie = `refresh_token=${responseData.refresh_token}; path=/; SameSite=None; Secure`;
 
                 if (userRole === "admin") {
+                    alert("Redirecting to admin page...");
                     window.location.href = "http://localhost:8181/admin/index.html";
                 } else if (userRole === "customer") {
+                    alert("Redirecting to home page...");
                     window.location.href = "http://localhost:8181/";
                 } else {
+                    alert("User role not recognized.");
                     window.location.href = "http://localhost:8181/login.html";
                 }
             }
@@ -47,10 +54,10 @@ document.addEventListener("DOMContentLoaded", async function () {
     }
 });
 
-async function getUserRole(access_token) {
+async function getUserRole(id_token) {
     try {
         const headers = new Headers();
-        headers.append("Authorization", `Bearer ${access_token}`);
+        headers.append("Authorization", `Bearer ${id_token}`);
 
         const response = await fetch("http://localhost:3002/user-role", {
             method: "GET",
