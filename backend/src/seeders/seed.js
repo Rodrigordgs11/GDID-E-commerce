@@ -2,6 +2,8 @@ const { sequelize } = require("../config/database");
 const Users = require("../models/User");
 const Roles = require("../models/Role");
 const Product = require("../models/Product");
+const Order = require("../models/Order");
+const OrderItem = require("../models/OrderItem");
 
 const seed = async () => {
     try {
@@ -75,6 +77,28 @@ const seed = async () => {
         ];
 
         await Product.bulkCreate(products);
+
+        const orders = [
+            { total: 1099.00, status: "Pendente", userId: (await Users.findOne({ where: { email: "user@gmail.com" } })).id, date: new Date(2025, 3, 21) },
+            { total: 999.00, status: "Enviada", userId: (await Users.findOne({ where: { email: "user@gmail.com" } })).id, date: new Date(2024, 12, 1) },
+            { total: 1399.00, status: "Cancelada", userId: (await Users.findOne({ where: { email: "user@gmail.com" } })).id, date: new Date(2024, 0, 15) },
+            { total: 2098.00, status: "Entregue", userId: (await Users.findOne({ where: { email: "user@gmail.com" } })).id, date: new Date(2023, 11, 30) },
+            { total: 799.00, status: "Entregue", userId: (await Users.findOne({ where: { email: "user@gmail.com" } })).id, date: new Date(2023, 10, 5) }
+
+        ];
+
+        await Order.bulkCreate(orders);
+
+        const orderItems = [
+            { quantity: 1, price: 1099.00, orderId: (await Order.findOne({ where: { total: 1099.00 } })).id, productId: (await Product.findOne({ where: { name: "Apple iPhone 17 Air" } })).id },
+            { quantity: 1, price: 999.00, orderId: (await Order.findOne({ where: { total: 999.00 } })).id, productId: (await Product.findOne({ where: { name: "Samsung Galaxy S25" } })).id },
+            { quantity: 1, price: 1399.00, orderId: (await Order.findOne({ where: { total: 1399.00 } })).id, productId: (await Product.findOne({ where: { name: "Iphone 16 Pro Max" } })).id },
+            { quantity: 1, price: 1099.00, orderId: (await Order.findOne({ where: { total: 2098.00 } })).id, productId: (await Product.findOne({ where: { name: "Apple iPhone 17 Air" } })).id },
+            { quantity: 1, price: 999.00, orderId: (await Order.findOne({ where: { total: 2098.00 } })).id, productId: (await Product.findOne({ where: { name: "Samsung Galaxy S25" } })).id},
+            { quantity: 1, price: 799.00, orderId: (await Order.findOne({ where: { total: 799.00 } })).id, productId: (await Product.findOne({ where: { name: "OnePlus 13" } })).id }
+        ];
+
+        await OrderItem.bulkCreate(orderItems);
 
         console.log("Database seeded successfully.");
     } catch (error) {

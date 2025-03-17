@@ -21,7 +21,6 @@
                 <div class="collapse navbar-collapse" id="navbarSupportedContent">
                     <ul class="navbar-nav me-auto mb-2 mb-lg-0 ms-lg-4">
                         <li class="nav-item"><a class="nav-link" href="index.html">Início</a></li>
-                        <li class="nav-item"><a class="nav-link" href="store.html">Loja</a></li>
                         <li class="nav-item"><a class="nav-link" href="about.html">Sobre</a></li>
                     </ul>
                     <form class="d-flex">
@@ -51,8 +50,8 @@
                         <div class="card">
                             <div class="card-body text-center">
                                 <i class="bi-person-circle fs-1 text-dark"></i>
-                                <h3 class="mt-3" id="user-name">Nome do Usuário</h3>
-                                <h1 class="h6 mt-3">Informações de Contato</h1>
+                                <h3 class="mt-3" id="user-name">Nome do Utilizador</h3>
+                                <h1 class="h6 mt-3">Informações de Contacto</h1>
                             
                                 <div id="user-info">
                                     <p class="mb-1"><strong>Email</strong></p>
@@ -74,32 +73,9 @@
                 <!-- Order History -->
                 <div class="mt-5">
                     <h4 class="text-center">Histórico de Pedidos</h4>
-                    <div class="table-responsive">
-                        <table class="table table-striped">
-                            <thead>
-                                <tr>
-                                    <th>Pedido</th>
-                                    <th>Data</th>
-                                    <th>Status</th>
-                                    <th>Valor</th>
-                                </tr>
-                            </thead>
-                            <tbody id="order-history">
-                                <tr>
-                                    <td>#12345</td>
-                                    <td>10/03/2025</td>
-                                    <td>Entregue</td>
-                                    <td>R$ 2.500,00</td>
-                                </tr>
-                                <tr>
-                                    <td>#12346</td>
-                                    <td>15/03/2025</td>
-                                    <td>A Caminho</td>
-                                    <td>R$ 3.200,00</td>
-                                </tr>
-                                <!-- Mais pedidos serão carregados via JavaScript -->
-                            </tbody>
-                        </table>
+                    <hr />
+                    <div id="order-history" class="accordion mt-3">
+                        <!-- Pedidos carregados via JavaScript -->
                     </div>
                 </div>
             </div>

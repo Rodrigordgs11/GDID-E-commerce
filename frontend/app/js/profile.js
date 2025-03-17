@@ -1,5 +1,4 @@
 document.addEventListener("DOMContentLoaded", async function () {
-
     const access_token = document.cookie.split(";").find((cookie) => cookie.includes("access_token")).split("=")[1];
 
     const user = await fetch("http://localhost:3002/user", {
@@ -11,6 +10,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 
     }).then((response) => response.json());
 
+    fetchOrders(user.id);
 
     document.getElementById("user-name").textContent = user.name;
     document.getElementById("user-email").textContent = user.email;
@@ -24,7 +24,6 @@ let originalUserInfo = {
 };
 
 function toggleEdit() {
-    const userInfoDiv = document.getElementById("user-info");
     const editButton = document.getElementById("edit-button");
     const saveButton = document.getElementById("save-button");
 
@@ -91,4 +90,70 @@ async function editProfile() {
         console.error("Error updating profile:", error);
         alert("An unexpected error occurred: " + error.message);
     }
+}
+
+function fetchOrders(userId) {
+    fetch('http://localhost:3002/orders/' + userId, {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${document.cookie.split(';').find(cookie => cookie.includes('access_token')).split('=')[1]}`
+        }
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+        return response.json();
+    })
+    .then(data => {
+        const orderHistory = document.getElementById('order-history');
+        orderHistory.innerHTML = ''; 
+        if (!data.orders || data.orders.length === 0) {
+            orderHistory.innerHTML = '<p class="text-center text-muted">Nenhum pedido encontrado</p>';
+            return;
+        }
+
+        data.orders.forEach((order, index) => {
+            const orderDate = new Date(order.date).toLocaleString();
+            const orderId = `order-${index + 1}`;
+            const collapseId = `collapse-${index}`; // Unique ID for each accordion
+
+            const itemsList = order.OrderItems.map(item => `
+                <li class="list-group-item">
+                    <strong>Produto:</strong> ${item.Product.name} <br>
+                    <strong>Quantidade:</strong> ${item.quantity} <br>
+                    <strong>Preço:</strong> ${item.price.toFixed(2)}€
+                </li>
+            `).join('');
+
+            const orderElement = document.createElement('div');
+            orderElement.className = 'accordion-item';
+            orderElement.innerHTML = `
+                <h2 class="accordion-header" id="${orderId}">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" 
+                        data-bs-target="#${collapseId}" aria-expanded="false"
+                        style="background-color: black; color: white;">
+                        Pedido #${index + 1} - ${order.status} 
+                        <small class="ms-3 text-muted">(${orderDate})</small>
+                    </button>
+                </h2>
+                <div id="${collapseId}" class="accordion-collapse collapse" aria-labelledby="${orderId}" data-bs-parent="#order-history">
+                    <div class="accordion-body">
+                        <h6>Total: ${order.total.toFixed(2)}€</h6>
+                        <ul class="list-group mt-2">
+                            ${itemsList}
+                        </ul>
+                    </div>
+                </div>
+            `;
+
+            orderHistory.appendChild(orderElement);
+        });
+    })
+    .catch(error => {
+        console.error('Erro ao buscar pedidos:', error);
+        document.getElementById('order-history').innerHTML = 
+            '<p class="text-center text-danger">Erro ao carregar os pedidos</p>';
+    });
 }
