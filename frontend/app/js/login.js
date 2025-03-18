@@ -1,4 +1,5 @@
 document.addEventListener("DOMContentLoaded", async function () {
+    localStorage.setItem('loginPageURL', window.location.href);
     const baseUrl = window.location.origin + window.location.pathname;
     const urlParams = new URLSearchParams(window.location.search);
     const code = urlParams.get("code");
@@ -85,3 +86,45 @@ async function checkSSO() {
         //window.location.href = "http://localhost:8181/login.html";
     }
 }
+
+document.addEventListener("DOMContentLoaded", function () {
+    document.getElementById("loginForm").addEventListener("submit", async function (event) {
+        event.preventDefault();
+
+        const email = document.getElementById("email").value;
+        const password = document.getElementById("password").value;
+
+        try {
+            const response = await fetch("http://localhost:3002/login", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ email, password }),
+                credentials: "include", // Sends cookies
+            });
+
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.error || "Login failed");
+            }
+
+            const data = await response.json();
+
+            document.cookie = `app_access_token=${data.access_token}; path=/; SameSite=None; Secure`;
+            document.cookie = `app_refresh_token=${data.refresh_token}; path=/; SameSite=None; Secure`;
+
+            const userRole = await getUserRole(data.access_token);
+
+
+            if (userRole === "admin") {
+                window.location.href = "http://localhost:8181/admin/index.html";
+            } else if (userRole === "customer") {
+                window.location.href = "http://localhost:8181/";
+            } else {
+                window.location.href = "http://localhost:8181/login.html";
+            }
+
+        } catch (error) {
+            document.getElementById("errorMessage").innerText = "Error: " + error.message;
+        }
+    });
+});

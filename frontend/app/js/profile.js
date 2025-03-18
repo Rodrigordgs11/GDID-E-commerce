@@ -15,6 +15,12 @@ document.addEventListener("DOMContentLoaded", async function () {
     document.getElementById("user-name").textContent = user.name;
     document.getElementById("user-email").textContent = user.email;
     document.getElementById("user-phone").textContent = user.phone;
+
+    // Check if the user is authenticated through IDP
+    const isAuthenticatedThroughIDP = document.cookie.split(";").find((cookie) => cookie.includes("app_access_token"));
+    if (!isAuthenticatedThroughIDP) {
+        document.getElementById("edit-button").classList.add("d-none");
+    }
 });
 
 let originalUserInfo = {
@@ -81,10 +87,9 @@ async function editProfile() {
         const data = await response.json();
 
         if (response.ok) {
-            alert("Profile updated successfully!");
             location.reload();
         } else {
-            alert(`Error: ${data.error || "Unable to update profile"}`);
+            alert(`Error: ${data.error}`);
         }
     } catch (error) {
         console.error("Error updating profile:", error);
