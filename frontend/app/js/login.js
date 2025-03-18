@@ -6,6 +6,8 @@ document.addEventListener("DOMContentLoaded", async function () {
     const client_id = urlParams.get("client_id");
     const client_secret = urlParams.get("client_secret");
 
+    checkSSO();
+
     if (code) {
         const data = {
             code,
@@ -24,6 +26,8 @@ document.addEventListener("DOMContentLoaded", async function () {
             });
 
             const responseData = await response.json();
+
+            checkSSO();
 
             if (responseData.error) {
                 alert("Error while exchanging code for token: " + responseData.error);
@@ -68,5 +72,16 @@ async function getUserRole(id_token) {
     } catch (error) {
         alert("Error while fetching user role: " + error);
         return null;
+    }
+}
+
+async function checkSSO() {
+    const response = await fetch("http://localhost:3001/verify", { credentials: "include" });
+    const data = await response.json();
+
+    if (data.authenticated) {
+        window.location.href = "http://localhost:8181/";
+    } else {
+        //window.location.href = "http://localhost:8181/login.html";
     }
 }
