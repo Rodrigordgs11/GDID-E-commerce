@@ -23,8 +23,10 @@ const seed = async () => {
             { email: "pedroslv05@gmail.com", name: "Pedro", phone: "987654321", password: "pedro", roleId: adminRole.id }
         ];
 
-        await Users.bulkCreate(users);
-
+        for (const user of users) {
+            await Users.create(user);
+        }
+        
         const products = [
             {
                 name: "Apple iPhone 17 Air",
