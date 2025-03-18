@@ -13,21 +13,25 @@ function protectedRoute() {
     const headers = new Headers();
     headers.append("Authorization", `Bearer ${access_token}`);
 
-    fetch("http://localhost:3002/protected", {
+    fetch("http://localhost:3002/protected-admin", {
         method: "GET",
         headers: headers,
     })
-    .then((response) => response.json())
+    .then((response) => {
+        if (response.status === 403) {
+            window.location.href = "http://localhost:8181/login.html";
+            return;
+        }
+        return response.json();
+    })
     .then((data) => {
         if (data.error) {
-            alert("Error while fetching protected route: " + data.error);
             window.location.href = "http://localhost:8181/login.html";
         } else {
             console.log("Protected route accessed successfully.");
         }
     })
     .catch((error) => {
-        alert("Error while fetching protected route: " + error);
         window.location.href = "http://localhost:8181/login.html";
     });
 }
