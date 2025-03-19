@@ -35,8 +35,8 @@ document.addEventListener("DOMContentLoaded", async function () {
             } else {
                 const userRole = await getUserRole(responseData.id_token);
 
-                document.cookie = `access_token=${responseData.access_token}; path=/; SameSite=None; Secure`;
-                document.cookie = `refresh_token=${responseData.refresh_token}; path=/; SameSite=None; Secure`;
+                document.cookie = `idp_access_token=${responseData.access_token}; path=/; SameSite=None; Secure`;
+                document.cookie = `idp_refresh_token=${responseData.refresh_token}; path=/; SameSite=None; Secure`;
 
                 if (userRole === "admin") {
                     window.location.href = "http://localhost:8181/admin/index.html";
@@ -99,7 +99,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ email, password }),
-                credentials: "include", // Sends cookies
+                credentials: "include",
             });
 
             if (!response.ok) {
@@ -109,8 +109,9 @@ document.addEventListener("DOMContentLoaded", function () {
 
             const data = await response.json();
 
-            document.cookie = `app_access_token=${data.access_token}; path=/; SameSite=None; Secure`;
-            document.cookie = `app_refresh_token=${data.refresh_token}; path=/; SameSite=None; Secure`;
+            document.cookie = `app1_access_token=${data.access_token}; path=/; SameSite=None; Secure`;
+            document.cookie = `app1_refresh_token=${data.refresh_token}; path=/; SameSite=None; Secure`;
+            
 
             const userRole = await getUserRole(data.access_token);
 

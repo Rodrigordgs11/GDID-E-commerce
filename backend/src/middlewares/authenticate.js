@@ -33,7 +33,6 @@ const authenticate = async (req, res, next) => {
         if (!decodedHeader) throw new Error("Invalid JWT format.");
 
         let decoded;
-
         if (!decodedHeader.header.kid) {
             decoded = jwt.verify(token, process.env.JWT_SECRET, { algorithms: ["HS256"] });
         } else {

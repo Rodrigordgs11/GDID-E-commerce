@@ -3,12 +3,17 @@ document.addEventListener("DOMContentLoaded", function () {
 });
 
 function protectedRoute() {
-    if (!document.cookie.split(";").find((cookie) => cookie.includes("access_token"))) {
+    if (!document.cookie.split(";").find((cookie) => cookie.includes("app1_access_token")) && !document.cookie.split(";").find((cookie) => cookie.includes("idp_access_token"))) {
         window.location.href = "http://localhost:8181/login.html";
         return;
     }
     
-    const access_token = document.cookie.split(";").find((cookie) => cookie.includes("access_token")).split("=")[1];
+    let access_token;
+    if (document.cookie.split(";").find((cookie) => cookie.includes("app1_access_token"))) {
+        access_token = document.cookie.split(";").find((cookie) => cookie.includes("app1_access_token")).split("=")[1];
+    } else if (document.cookie.split(";").find((cookie) => cookie.includes("idp_access_token"))) {
+        access_token = document.cookie.split(";").find((cookie) => cookie.includes("idp_access_token")).split("=")[1];
+    }
 
     const headers = new Headers();
     headers.append("Authorization", `Bearer ${access_token}`);
@@ -51,8 +56,8 @@ async function token_refresh(refresh_token) {
             if (data.error) {
                 alert("Error while refreshing token: " + data.error);
             } else {
-                document.cookie = `access_token=${data.access_token}; path=/; SameSite=None; Secure`;
-                document.cookie = `refresh_token=${data.refresh_token}; path=/; SameSite=None; Secure`;
+                document.cookie = `idp_access_token=${data.access_token}; path=/; SameSite=None; Secure`;
+                document.cookie = `idp_refresh_token=${data.refresh_token}; path=/; SameSite=None; Secure`;
             }
         })
     } catch (error) {
@@ -78,8 +83,8 @@ async function refresh_token_withouth_idp(refresh_token) {
             if (data.error) {
                 alert("Error while refreshing token without IDP: " + data.error);
             } else {
-                document.cookie = `app_access_token=${data.access_token}; path=/; SameSite=None; Secure`;
-                document.cookie = `app_refresh_token=${data.refresh_token}; path=/; SameSite=None; Secure`;
+                document.cookie = `app1_access_token=${data.access_token}; path=/; SameSite=None; Secure`;
+                document.cookie = `app1_refresh_token=${data.refresh_token}; path=/; SameSite=None; Secure`;
             }
         })
     } catch (error) {
@@ -92,22 +97,22 @@ async function refresh_token_withouth_idp(refresh_token) {
 }
 
 setInterval(async function () {
-    if (document.cookie.split(";").find((cookie) => cookie.includes("app_refresh_token"))) {
-        const refresh_token = document.cookie.split(";").find((cookie) => cookie.includes("app_refresh_token")).split("=")[1];
+    if (document.cookie.split(";").find((cookie) => cookie.includes("app1_refresh_token"))) {
+        const refresh_token = document.cookie.split(";").find((cookie) => cookie.includes("app1_refresh_token")).split("=")[1];
         refresh_token_withouth_idp(refresh_token);
     } else {
-        const refresh_token = document.cookie.split(";").find((cookie) => cookie.includes("refresh_token")).split("=")[1];
+        const refresh_token = document.cookie.split(";").find((cookie) => cookie.includes("idp_refresh_token")).split("=")[1];
         token_refresh(refresh_token);
     }
 }, 300000);
 
 function logout() {
-    if (document.cookie.split(";").find((cookie) => cookie.includes("app_access_token"))) {
-        document.cookie = "app_access_token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 UTC; SameSite=None; Secure";
-        document.cookie = "app_refresh_token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 UTC; SameSite=None; Secure";
+    if (document.cookie.split(";").find((cookie) => cookie.includes("app1_access_token"))) {
+        document.cookie = "app1_access_token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 UTC; SameSite=None; Secure";
+        document.cookie = "app1_refresh_token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 UTC; SameSite=None; Secure";
         window.location.href = "http://localhost:8181/login.html";
     } else {
-        const accessTokenCookie = document.cookie.split(";").find(row => row.startsWith("access_token="));
+        const accessTokenCookie = document.cookie.split(";").find(row => row.includes("idp_access_token"));
         
         if (!accessTokenCookie) {
             alert("No access token found, redirecting to login...");
@@ -130,8 +135,8 @@ function logout() {
             return response.json();
         })
         .then(() => {
-            document.cookie = "access_token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 UTC; SameSite=None; Secure";
-            document.cookie = "refresh_token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 UTC; SameSite=None; Secure";
+            document.cookie = "aidp_ccess_token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 UTC; SameSite=None; Secure";
+            document.cookie = "idp_refresh_token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 UTC; SameSite=None; Secure";
 
             window.location.href = "http://localhost:8181/login.html";
         })

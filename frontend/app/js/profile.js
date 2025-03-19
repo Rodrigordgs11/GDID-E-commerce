@@ -1,5 +1,10 @@
 document.addEventListener("DOMContentLoaded", async function () {
-    const access_token = document.cookie.split(";").find((cookie) => cookie.includes("access_token")).split("=")[1];
+    let access_token;
+    if (document.cookie.split(";").find((cookie) => cookie.includes("app1_access_token"))) {
+        access_token = document.cookie.split(";").find((cookie) => cookie.includes("app1_access_token")).split("=")[1];
+    } else if (document.cookie.split(";").find((cookie) => cookie.includes("idp_access_token"))) {
+        access_token = document.cookie.split(";").find((cookie) => cookie.includes("idp_access_token")).split("=")[1];
+    }
 
     const user = await fetch("http://localhost:3002/user", {
         method: "GET",
@@ -16,8 +21,7 @@ document.addEventListener("DOMContentLoaded", async function () {
     document.getElementById("user-email").textContent = user.email;
     document.getElementById("user-phone").textContent = user.phone;
 
-    // Check if the user is authenticated through IDP
-    const isAuthenticatedThroughIDP = document.cookie.split(";").find((cookie) => cookie.includes("app_access_token"));
+    const isAuthenticatedThroughIDP = document.cookie.split(";").find((cookie) => cookie.includes("app1_access_token"));
     if (!isAuthenticatedThroughIDP) {
         document.getElementById("edit-button").classList.add("d-none");
     }
@@ -60,8 +64,12 @@ async function editProfile() {
     const email = document.getElementById("edit-email").value.trim();
     const phone = document.getElementById("edit-phone").value.trim();
 
-    const access_token = document.cookie.split(";").find((cookie) => cookie.includes("access_token")).split("=")[1];
-
+    let access_token;
+    if (document.cookie.split(";").find((cookie) => cookie.includes("app1_access_token"))) {
+        access_token = document.cookie.split(";").find((cookie) => cookie.includes("app1_access_token")).split("=")[1];
+    } else if (document.cookie.split(";").find((cookie) => cookie.includes("idp_access_token"))) {
+        access_token = document.cookie.split(";").find((cookie) => cookie.includes("idp_access_token")).split("=")[1];
+    }
 
     if (!name || !email || !phone) {
         alert("All fields are required!");
@@ -98,11 +106,18 @@ async function editProfile() {
 }
 
 function fetchOrders(userId) {
+    let access_token;
+    if (document.cookie.split(";").find((cookie) => cookie.includes("app1_access_token"))) {
+        access_token = document.cookie.split(";").find((cookie) => cookie.includes("app1_access_token")).split("=")[1];
+    } else if (document.cookie.split(";").find((cookie) => cookie.includes("idp_access_token"))) {
+        access_token = document.cookie.split(";").find((cookie) => cookie.includes("idp_access_token")).split("=")[1];
+    }
+
     fetch('http://localhost:3002/orders/' + userId, {
         method: 'GET',
         headers: {
             'Content-Type': 'application/json',
-            'Authorization': `Bearer ${document.cookie.split(';').find(cookie => cookie.includes('access_token')).split('=')[1]}`
+            'Authorization': `Bearer ${access_token}`
         }
     })
     .then(response => {

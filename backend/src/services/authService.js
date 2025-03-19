@@ -2,7 +2,6 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const { sequelize } = require("../config/database");
 
-
 async function login(req, res) {
     const {email, password} = req.body;
     if (!email || !password) {

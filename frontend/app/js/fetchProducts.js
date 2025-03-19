@@ -3,7 +3,12 @@ document.addEventListener("DOMContentLoaded", function () {
 });
 
 function fetchProducts() {
-    const access_token = document.cookie.split(";").find((cookie) => cookie.includes("access_token")).split("=")[1];
+    let access_token;
+    if (document.cookie.split(";").find((cookie) => cookie.includes("app1_access_token"))) {
+        access_token = document.cookie.split(";").find((cookie) => cookie.includes("app1_access_token")).split("=")[1];
+    } else {
+        access_token = document.cookie.split(";").find((cookie) => cookie.includes("idp_access_token")).split("=")[1];
+    }
     const headers = new Headers();
     headers.append("Authorization", `Bearer ${access_token}`);
     
@@ -20,7 +25,7 @@ function fetchProducts() {
             }
         })
         .catch((error) => {
-            console.error("Error while fetching products: " + error);
+            console.error("Error while fetching products: " + error.message);
             alert("Error while fetching products: " + error);
         });
 }

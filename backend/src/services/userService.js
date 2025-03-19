@@ -46,7 +46,6 @@ async function getUserRole(req, res) {
         if (!decodedHeader) return res.status(401).json({ message: "Invalid JWT format." });
 
         let decoded;
-        
         if (!decodedHeader.header.kid) {
             decoded = jwt.verify(token, process.env.JWT_SECRET, { algorithms: ["HS256"] });
         } else {
@@ -94,7 +93,7 @@ async function getUser(req, res) {
     }
 }
 
-async function updateUser(req, res) {
+async function updateUserProfile(req, res) {
     try {
         const token = req.header("Authorization")?.replace("Bearer ", "");
         if (!token) return res.status(401).json({ message: "Token not provided." });
@@ -162,4 +161,4 @@ async function deleteUser(req, res) {
     }
 }
 
-module.exports = { createUser, getUsers, getUserRole, getUser, updateUser, deleteUser };
+module.exports = { createUser, getUsers, getUserRole, getUser, updateUserProfile, updateUser, deleteUser };
