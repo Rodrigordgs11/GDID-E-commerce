@@ -1,17 +1,8 @@
 document.addEventListener("DOMContentLoaded", async function () {
-    let access_token;
-    if (document.cookie.split(";").find((cookie) => cookie.includes("app1_access_token"))) {
-        access_token = document.cookie.split(";").find((cookie) => cookie.includes("app1_access_token")).split("=")[1];
-    } else if (document.cookie.split(";").find((cookie) => cookie.includes("idp_access_token"))) {
-        access_token = document.cookie.split(";").find((cookie) => cookie.includes("idp_access_token")).split("=")[1];
-    }
 
     const user = await fetch("http://localhost:3002/user", {
         method: "GET",
-        headers: {
-            "Content-Type": "application/json",
-            "Authorization": `Bearer ${access_token}`,
-        },
+        credentials: "include",
 
     }).then((response) => response.json());
 
@@ -20,11 +11,6 @@ document.addEventListener("DOMContentLoaded", async function () {
     document.getElementById("user-name").textContent = user.name;
     document.getElementById("user-email").textContent = user.email;
     document.getElementById("user-phone").textContent = user.phone;
-
-    const isAuthenticatedThroughIDP = document.cookie.split(";").find((cookie) => cookie.includes("app1_access_token"));
-    if (!isAuthenticatedThroughIDP) {
-        document.getElementById("edit-button").classList.add("d-none");
-    }
 });
 
 let originalUserInfo = {
@@ -38,7 +24,6 @@ function toggleEdit() {
     const saveButton = document.getElementById("save-button");
 
     const nameElement = document.getElementById("user-name");
-    const emailElement = document.getElementById("user-email");
     const phoneElement = document.getElementById("user-phone");
 
     if (editButton.textContent === "Editar Perfil") {
@@ -46,39 +31,27 @@ function toggleEdit() {
         saveButton.classList.remove("d-none");
 
         nameElement.innerHTML = `<input type="text" id="edit-name" value="${nameElement.textContent}" class="form-control mx-auto" required style="width: 40%; text-align: center;">`;
-        emailElement.innerHTML = `<input type="email" id="edit-email" value="${emailElement.textContent}" class="form-control mx-auto" required style="width: 40%; text-align: center;">`;
         phoneElement.innerHTML = `<input type="tel" id="edit-phone" value="${phoneElement.textContent}" class="form-control mx-auto" required style="width: 40%; text-align: center;">`;
     } else {
         editButton.textContent = "Editar Perfil";
         saveButton.classList.add("d-none");
 
         nameElement.textContent = document.getElementById("edit-name").value;
-        emailElement.textContent = document.getElementById("edit-email").value;
         phoneElement.textContent = document.getElementById("edit-phone").value;
     }
 }
 
-
 async function editProfile() {
     const name = document.getElementById("edit-name").value.trim();
-    const email = document.getElementById("edit-email").value.trim();
     const phone = document.getElementById("edit-phone").value.trim();
 
-    let access_token;
-    if (document.cookie.split(";").find((cookie) => cookie.includes("app1_access_token"))) {
-        access_token = document.cookie.split(";").find((cookie) => cookie.includes("app1_access_token")).split("=")[1];
-    } else if (document.cookie.split(";").find((cookie) => cookie.includes("idp_access_token"))) {
-        access_token = document.cookie.split(";").find((cookie) => cookie.includes("idp_access_token")).split("=")[1];
-    }
-
-    if (!name || !email || !phone) {
+    if (!name || !phone) {
         alert("All fields are required!");
         return;
     }
 
     const requestBody = {
         name: name,
-        email: email,
         phone: phone
     };
 
@@ -87,8 +60,8 @@ async function editProfile() {
             method: "PUT",
             headers: {
                 "Content-Type": "application/json",
-                Authorization: `Bearer ${access_token}`
             },
+            credentials: "include",
             body: JSON.stringify(requestBody)
         });
 
@@ -106,19 +79,12 @@ async function editProfile() {
 }
 
 function fetchOrders(userId) {
-    let access_token;
-    if (document.cookie.split(";").find((cookie) => cookie.includes("app1_access_token"))) {
-        access_token = document.cookie.split(";").find((cookie) => cookie.includes("app1_access_token")).split("=")[1];
-    } else if (document.cookie.split(";").find((cookie) => cookie.includes("idp_access_token"))) {
-        access_token = document.cookie.split(";").find((cookie) => cookie.includes("idp_access_token")).split("=")[1];
-    }
-
     fetch('http://localhost:3002/orders/' + userId, {
         method: 'GET',
         headers: {
             'Content-Type': 'application/json',
-            'Authorization': `Bearer ${access_token}`
-        }
+        },
+        credentials: 'include',
     })
     .then(response => {
         if (!response.ok) {

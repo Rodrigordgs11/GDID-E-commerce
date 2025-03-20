@@ -3,19 +3,9 @@ document.addEventListener("DOMContentLoaded", function () {
 });
 
 function fetchUsers() {
-    let access_token;
-    if (document.cookie.split(";").find((cookie) => cookie.includes("app1_access_token"))) {
-        access_token = document.cookie.split(";").find((cookie) => cookie.includes("app1_access_token")).split("=")[1];
-    } else if (document.cookie.split(";").find((cookie) => cookie.includes("idp_access_token"))) {
-        access_token = document.cookie.split(";").find((cookie) => cookie.includes("idp_access_token")).split("=")[1];
-    }
-    
-    const headers = new Headers();
-    headers.append("Authorization", `Bearer ${access_token}`);
-    
     fetch("http://localhost:3002/users", {
         method: "GET",
-        headers: headers,
+        credentials: "include",
     })
         .then((response) => response.json())
         .then((data) => {
@@ -77,18 +67,13 @@ function createUser() {
     }
     
     const userData = { name, email, phone, password };
-
-    let access_token;
-    if (document.cookie.split(";").find((cookie) => cookie.includes("app1_access_token"))) {
-        access_token = document.cookie.split(";").find((cookie) => cookie.includes("app1_access_token")).split("=")[1];
-    } else if (document.cookie.split(";").find((cookie) => cookie.includes("idp_access_token"))) {
-        access_token = document.cookie.split(";").find((cookie) => cookie.includes("idp_access_token")).split("=")[1];
-    }
-
-    const headers = new Headers();
-    headers.append("Authorization", `Bearer ${access_token}`);
     
-    fetch("http://localhost:3002/users", { method: "POST", headers: headers, body: JSON.stringify(userData), headers: { "Content-Type": "application/json" } })
+    fetch("http://localhost:3002/users", { 
+            method: "POST", 
+            headers: { "Content-Type": "application/json" },
+            credentials: "include",
+            body: JSON.stringify(userData), 
+        })
          .then(response => response.json())
          .then(data => { alert("User created successfully!"), location.reload() })
          .catch(error => console.error("Error:", error));
@@ -106,20 +91,11 @@ function editUser(){
     };
 
     try {
-        let access_token;
-        if (document.cookie.split(";").find((cookie) => cookie.includes("app1_access_token"))) {
-            access_token = document.cookie.split(";").find((cookie) => cookie.includes("app1_access_token")).split("=")[1];
-        } else if (document.cookie.split(";").find((cookie) => cookie.includes("idp_access_token"))) {
-            access_token = document.cookie.split(";").find((cookie) => cookie.includes("idp_access_token")).split("=")[1];
-        }
-
-        const headers = new Headers();
-        headers.append("Authorization", `Bearer ${access_token}`);
 
         fetch(`http://localhost:3002/user/${userId}`, {
             method: "PUT",
-            headers: headers,
             headers: { "Content-Type": "application/json" },
+            credentials: "include",
             body: JSON.stringify(updatedUser),
         })
             .then(response => response.json())
@@ -131,20 +107,10 @@ function editUser(){
 }
 
 
-function deleteUser(id){
-        let access_token;
-    if (document.cookie.split(";").find((cookie) => cookie.includes("app1_access_token"))) {
-        access_token = document.cookie.split(";").find((cookie) => cookie.includes("app1_access_token")).split("=")[1];
-    } else if (document.cookie.split(";").find((cookie) => cookie.includes("idp_access_token"))) {
-        access_token = document.cookie.split(";").find((cookie) => cookie.includes("idp_access_token")).split("=")[1];
-    }
-    
-    const headers = new Headers();
-    headers.append("Authorization", `Bearer ${access_token}`);
-    
+function deleteUser(id){    
     fetch(`http://localhost:3002/user/${id}`, {
         method: "DELETE",
-        headers: headers,
+        credentials: "include",
     })
         .then((response) => response.json())
         .then((data) => {

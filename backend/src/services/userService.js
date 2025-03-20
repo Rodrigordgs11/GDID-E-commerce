@@ -69,7 +69,7 @@ async function getUserRole(req, res) {
 
 async function getUser(req, res) {
     try {
-        const token = req.header("Authorization")?.replace("Bearer ", "");
+        const token = req.cookies.app1_access_token || req.cookies.access_token;
         if (!token) return res.status(401).json({ message: "Token not provided." });
 
         const decodedHeader = jwt.decode(token, { complete: true });
@@ -95,7 +95,7 @@ async function getUser(req, res) {
 
 async function updateUserProfile(req, res) {
     try {
-        const token = req.header("Authorization")?.replace("Bearer ", "");
+        const token = req.cookies.app1_access_token || req.cookies.access_token;
         if (!token) return res.status(401).json({ message: "Token not provided." });
 
         const decodedHeader = jwt.decode(token, { complete: true });

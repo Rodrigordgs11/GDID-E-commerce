@@ -3,30 +3,23 @@ document.addEventListener("DOMContentLoaded", function () {
 });
 
 function fetchProducts() {
-    let access_token;
-    if (document.cookie.split(";").find((cookie) => cookie.includes("app1_access_token"))) {
-        access_token = document.cookie.split(";").find((cookie) => cookie.includes("app1_access_token")).split("=")[1];
-    } else {
-        access_token = document.cookie.split(";").find((cookie) => cookie.includes("idp_access_token")).split("=")[1];
-    }
-    const headers = new Headers();
-    headers.append("Authorization", `Bearer ${access_token}`);
-    
     fetch("http://localhost:3002/products", {
         method: "GET",
-        headers: headers,
+        credentials: "include",
     })
         .then((response) => response.json())
         .then((data) => {
             if (data.error) {
-                alert("Error while fetching products: " + data.error);
+                console.log("Error while fetching products: " + data.error);
+                window.location.href = "http://localhost:8181/login.html";
             } else {
                 displayProducts(data.products);
             }
         })
         .catch((error) => {
             console.error("Error while fetching products: " + error.message);
-            alert("Error while fetching products: " + error);
+            console.log("Error while fetching products: " + error);
+            window.location.href = "http://localhost:8181/login.html";
         });
 }
 

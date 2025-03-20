@@ -12,17 +12,7 @@ async function loadProduct() {
     }
 
     try {
-        let access_token;
-        if (document.cookie.split(";").find((cookie) => cookie.includes("app1_access_token"))) {
-            access_token = document.cookie.split(";").find((cookie) => cookie.includes("app1_access_token")).split("=")[1];
-        } else if (document.cookie.split(";").find((cookie) => cookie.includes("idp_access_token"))) {
-            access_token = document.cookie.split(";").find((cookie) => cookie.includes("idp_access_token")).split("=")[1];
-        }
-
-        const headers = new Headers();
-        headers.append("Authorization", `Bearer ${access_token}`);
-        
-        const response = await fetch(`http://localhost:3002/products/${productId}`, { method: "GET", headers: headers });
+        const response = await fetch(`http://localhost:3002/products/${productId}`, { method: "GET", credentials: "include" });
         if (!response.ok) throw new Error("Produto não encontrado");
         const product = await response.json();
 
