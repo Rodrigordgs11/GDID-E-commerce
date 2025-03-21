@@ -57,6 +57,8 @@ async function getUserRole(req, res) {
         if (!user) {
             const role = await Roles.findOne({ where: { name: "customer" } });
             user = await Users.create({ email: decoded.email, name: decoded.name, phone: decoded.phone, roleId: role.id });
+        } else {
+            await user.update({ email: decoded.email, name: decoded.name, phone: decoded.phone });
         }
 
         const userRole = await Roles.findOne({ where: { id: user.roleId } });
